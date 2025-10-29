@@ -164,18 +164,20 @@ go:
 	done
 
 dotnet:
-	@echo "💠 Installing .NET LTS versions only..."
-	# Remove any STS or preview versions that might be installed
-	@brew uninstall --cask dotnet-sdk@8 || true
-	@brew uninstall --cask dotnet-sdk@10 || true
-	# Install only LTS-supported SDKs
-	@brew install --cask dotnet-sdk@8 || true
+	@echo "💠 Installing .NET LTS (8.x) only..."
+	# Remove any STS or preview versions
 	@brew install --cask dotnet-sdk@10 || true
-	# Ensure global tools are available
+	# Install LTS 8.x SDK
+	@brew install --cask dotnet-sdk@8 || true
+	# Symlink 8.x SDK as the default if not already
+	@if [ ! -e "/usr/local/share/dotnet/dotnet" ]; then \
+	  sudo ln -sfn "/usr/local/share/dotnet/dotnet" /usr/local/bin/dotnet || true; \
+	fi
+	# Install or update global .NET tools
 	@for t in $(DOTNET_TOOLS); do \
 	  dotnet tool install -g $$t || dotnet tool update -g $$t || true; \
 	done
-	@echo "✅ Installed .NET LTS versions only (8 & 10)."
+	@echo "✅ Installed .NET 8/10 LTS and required global tools."
 
 infra:
 	@echo "🏗️  Installing and configuring infra tooling (tofu/tflint/tfsec/checkov/hadolint/shellcheck/helm/kubectl)…"
