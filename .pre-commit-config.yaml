@@ -1,0 +1,97 @@
+repos:
+  # ---------- Python format/lint ----------
+  - repo: https://github.com/psf/black
+    rev: 24.8.0
+    hooks:
+      - id: black
+
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      - id: ruff
+        args: [--fix]
+
+  - repo: https://github.com/pre-commit/mirrors-isort
+    rev: v5.13.2
+    hooks:
+      - id: isort
+
+  # ---------- Go lint ----------
+  - repo: https://github.com/golangci/golangci-lint
+    rev: v1.60.3
+    hooks:
+      - id: golangci-lint
+        args: [--fix]
+
+  # ---------- JS/TS ----------
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v9.13.0
+    hooks:
+      - id: eslint
+        args: [--fix]
+        additional_dependencies:
+          - eslint
+          - eslint-config-standard
+          - eslint-plugin-import
+          - eslint-plugin-n
+          - eslint-plugin-promise
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v4.0.0
+    hooks:
+      - id: prettier
+
+  # ---------- .NET ----------
+  - repo: local
+    hooks:
+      - id: dotnet-format
+        name: dotnet format
+        entry: dotnet format
+        language: system
+        types: [csharp]
+
+  # ---------- Infra & Security ----------
+  - repo: https://github.com/terraform-linters/tflint
+    rev: v0.55.1
+    hooks:
+      - id: tflint
+
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.98.0
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_validate
+      - id: terraform_docs # if you keep modules
+        args: ["--args=--hide providers --hide requirements"]
+
+  - repo: https://github.com/aquasecurity/tfsec
+    rev: v1.28.10
+    hooks:
+      - id: tfsec
+
+  - repo: https://github.com/bridgecrewio/checkov
+    rev: 3.2.309
+    hooks:
+      - id: checkov
+        args: ["-q"]
+
+  - repo: https://github.com/adrienverge/yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.0
+    hooks:
+      - id: hadolint
+
+  - repo: https://github.com/koalaman/shellcheck-precommit
+    rev: v0.10.0
+    hooks:
+      - id: shellcheck
+
+  # ---------- General text hygiene ----------
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: v0.41.0
+    hooks:
+      - id: markdownlint

@@ -1,0 +1,40 @@
+{
+  "recommendations": [
+    // Core
+    "eamodio.gitlens",
+    "editorconfig.editorconfig",
+    "usernamehw.errorlens",
+    "streetsidesoftware.code-spell-checker",
+    "shardulm94.trailing-spaces",
+
+    // Python
+    "ms-python.python",
+    "ms-python.black-formatter",
+    "charliermarsh.ruff",
+    "ms-toolsai.jupyter",
+
+    // Go
+    "golang.go",
+
+    // C#
+    "ms-dotnettools.csharp",
+
+    // JS/TS
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+
+    // YAML / Infra
+    "redhat.vscode-yaml",
+    "ms-azuretools.vscode-docker",
+    "hashicorp.terraform",
+    "ms-azuretools.vscode-bicep",
+    "ms-azuretools.vscode-azurefunctions",
+    "ms-vscode.azurecli",
+    "ms-kubernetes-tools.vscode-kubernetes-tools",
+
+    // Testing & BDD
+    "hbenl.vscode-test-explorer",
+    "kavod-io.vscode-jest-test-adapter",
+    "alexkrechik.cucumberautocomplete"
+  ]
+}
