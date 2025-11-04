@@ -1,0 +1,41 @@
+\
+{
+  "recommendations": [
+    "eamodio.gitlens",
+    "editorconfig.editorconfig",
+    "usernamehw.errorlens",
+    "streetsidesoftware.code-spell-checker",
+    "shardulm94.trailing-spaces",
+
+    "ms-python.python",
+    "ms-python.black-formatter",
+    "charliermarsh.ruff",
+    "ms-toolsai.jupyter",
+
+    "golang.go",
+
+    "ms-dotnettools.csdevkit",
+    "ms-dotnettools.csharp",
+    "formulahendry.dotnet-test-explorer",
+    "kreativgeist.csharpextensions",
+    "jmrog.vscode-nuget-package-manager",
+
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+
+    "redhat.vscode-yaml",
+    "ms-azuretools.vscode-docker",
+    "hashicorp.terraform",
+    "ms-azuretools.vscode-bicep",
+    "ms-azuretools.vscode-azurefunctions",
+    "ms-vscode.azurecli",
+    "ms-kubernetes-tools.vscode-kubernetes-tools",
+
+    "hbenl.vscode-test-explorer",
+    "kavod-io.vscode-jest-test-adapter",
+    "alexkrechik.cucumberautocomplete",
+
+    "sswg.swift",
+    "vknabel.vscode-swiftlint"
+  ]
+}
