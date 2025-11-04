@@ -1,0 +1,140 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+SHELL_NAME="$(basename "$SHELL")"
+BOOTSTRAP_HOME="${BOOTSTRAP_HOME:-"$HOME/Workspace/dev-bootstrap"}"
+SCRIPT_NAME="createProject"
+INSTALL_PATH="$HOME/bin/$SCRIPT_NAME"
+
+# ---------- FUNCTIONS ----------
+
+install_homebrew() {
+  if ! command -v brew >/dev/null 2>&1; then
+    echo "🍺 Homebrew not found — installing..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    echo "✅ Homebrew installed."
+    echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> "$HOME/.zprofile"
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  else
+    echo "🍺 Homebrew already installed."
+  fi
+}
+
+init_self() {
+  echo "🔧 Initializing development bootstrap..."
+  mkdir -p "$HOME/bin" "$HOME/Workspace"
+
+  SRC_PATH="$(cd "$(dirname "$0")" && pwd)"
+  SCRIPT_SRC="$SRC_PATH/$SCRIPT_NAME"
+
+  if [[ ! -f "$SCRIPT_SRC" ]]; then
+    echo "⚠️  Could not locate $SCRIPT_NAME in current directory."
+    echo "    Run './$SCRIPT_NAME init' from your bootstrap repo root."
+    exit 1
+  fi
+
+  cp "$SCRIPT_SRC" "$INSTALL_PATH"
+  chmod +x "$INSTALL_PATH"
+  echo "✅ Copied $SCRIPT_NAME to $INSTALL_PATH"
+
+  if [[ "$SHELL_NAME" == "zsh" ]]; then
+    RC_FILE="$HOME/.zshrc"
+  else
+    RC_FILE="$HOME/.bashrc"
+  fi
+
+  if ! grep -q 'export PATH="$HOME/bin:$PATH"' "$RC_FILE" 2>/dev/null; then
+    echo 'export PATH="$HOME/bin:$PATH"' >> "$RC_FILE"
+    echo "🪶 Added ~/bin to PATH in $RC_FILE"
+  fi
+
+  if ! grep -q 'export BOOTSTRAP_HOME=' "$RC_FILE" 2>/dev/null; then
+    echo "export BOOTSTRAP_HOME=\"$PWD\"" >> "$RC_FILE"
+    echo "📍 Set BOOTSTRAP_HOME=\"$PWD\" in $RC_FILE"
+  fi
+
+  install_homebrew
+
+  echo "⚙️  Running bootstrap Makefile installation..."
+  cd "$PWD"
+  if [[ -f Makefile ]]; then
+    make install || true
+    make verify || true
+  else
+    echo "⚠️  No Makefile found in $PWD — skipping install."
+  fi
+
+  echo "✅ Bootstrap installation complete."
+  echo ""
+  echo "🔁 Reload your shell with:  source $RC_FILE"
+  echo ""
+  echo "Now you can create projects anywhere with:"
+  echo "   createProject dotnet MyApi"
+  echo "   createProject swift MyApp"
+  echo "   createProject py DataLab"
+  echo ""
+  exit 0
+}
+
+update_self() {
+  echo "🔄 Updating development bootstrap at $BOOTSTRAP_HOME..."
+  if [[ ! -d "$BOOTSTRAP_HOME/.git" ]]; then
+    echo "⚠️  No git repo found at $BOOTSTRAP_HOME"
+    exit 1
+  fi
+
+  cd "$BOOTSTRAP_HOME"
+  git fetch origin
+  git pull origin main || git pull origin master || true
+
+  if [[ -f Makefile ]]; then
+    echo "⚙️  Re-running toolchain install and verify..."
+    make install || true
+    make verify || true
+  fi
+
+  echo "✅ Bootstrap update complete."
+  exit 0
+}
+
+create_project() {
+  LANG="$1"
+  NAME="${2:-}"
+  if [[ -z "$NAME" ]]; then
+    echo "Usage: createProject <swift|dotnet|go|py|ts> <ProjectName>"
+    exit 1
+  fi
+
+  if [[ ! -f "$BOOTSTRAP_HOME/Makefile" ]]; then
+    echo "❌ Bootstrap Makefile not found at $BOOTSTRAP_HOME."
+    echo "   Run 'createProject init' inside your bootstrap repo first."
+    exit 2
+  fi
+
+  make -C "$BOOTSTRAP_HOME" "new:${LANG}" NAME="$NAME"
+}
+
+# ---------- ENTRY POINT ----------
+
+if [[ $# -lt 1 ]]; then
+  echo "Usage:"
+  echo "  createProject init                        # install and set up system-wide"
+  echo "  createProject update                      # pull latest bootstrap and reinstall"
+  echo "  createProject <swift|dotnet|go|py|ts> <ProjectName>"
+  exit 1
+fi
+
+CMD="$1"
+shift || true
+
+case "$CMD" in
+  init)
+    init_self
+    ;;
+  update)
+    update_self
+    ;;
+  *)
+    create_project "$CMD" "$@"
+    ;;
+esac
